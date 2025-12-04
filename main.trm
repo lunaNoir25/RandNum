@@ -1,0 +1,41 @@
+let LCG_MULTIPLIER = 1103514245
+let LCG_INCREMENT = 12345
+let LCG_MODULES = 2147483647
+
+let CURRENT_SEED = 1
+
+function Seed(newSeed)
+    CURRENT_SEED = int(newSeed) 
+end
+
+function RandInt(minVal, maxVal, LCG_A, LCG_C, LCG_M)
+    let multiplied = LCG_A * float(CURRENT_SEED) 
+    
+    let added = multiplied + LCG_C
+    
+    let nextSeedFloat = added % LCG_M 
+
+    let nextSeed = int(nextSeedFloat) 
+    
+    CURRENT_SEED = nextSeed
+
+    let normalized = float(nextSeed) / float(LCG_M) 
+
+    let range = maxVal - minVal + 1
+    let scaled = normalized * range
+
+    let result = floor(scaled) + minVal
+
+    return result
+end
+
+Seed(190)
+
+let first_rand = RandInt(1, 100, LCG_MULTIPLIER, LCG_INCREMENT, LCG_MODULES)
+print("First random number (1-100): " + str(first_rand))
+
+let second_rand = RandInt(1, 100, LCG_MULTIPLIER, LCG_INCREMENT, LCG_MODULES)
+print("Second random number (1-100): " + str(second_rand))
+
+let third_rand = RandInt(1, 100, LCG_MULTIPLIER, LCG_INCREMENT, LCG_MODULES)
+print("Third random number (1-100): " + str(third_rand))
