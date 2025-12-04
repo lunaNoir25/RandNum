@@ -1,41 +1,76 @@
-let LCG_MULTIPLIER = 1103514245
-let LCG_INCREMENT = 12345
-let LCG_MODULES = 2147483647
-
-let CURRENT_SEED = 1
-
-function Seed(newSeed)
-    CURRENT_SEED = int(newSeed) 
+function get_digit(num, index)
+    if index == 0
+        return int(num / 10)
+    else
+        return num % 10
+    end
 end
 
-function RandInt(minVal, maxVal, LCG_A, LCG_C, LCG_M)
-    let multiplied = LCG_A * float(CURRENT_SEED) 
+function digit_diff(n_a, n_b)
     
-    let added = multiplied + LCG_C
+    let d0_a = get_digit(n_a, 0)
+    let d0_b = get_digit(n_b, 0)
+    let diff0 = abs(d0_a - d0_b)
     
-    let nextSeedFloat = added % LCG_M 
-
-    let nextSeed = int(nextSeedFloat) 
+    let d1_a = get_digit(n_a, 1)
+    let d1_b = get_digit(n_b, 1)
+    let diff1 = abs(d1_a - d1_b)
     
-    CURRENT_SEED = nextSeed
-
-    let normalized = float(nextSeed) / float(LCG_M) 
-
-    let range = maxVal - minVal + 1
-    let scaled = normalized * range
-
-    let result = floor(scaled) + minVal
-
+    let result = (diff0 * 10) + diff1
+    
     return result
 end
 
-Seed(190)
 
-let first_rand = RandInt(1, 100, LCG_MULTIPLIER, LCG_INCREMENT, LCG_MODULES)
-print("First random number (1-100): " + str(first_rand))
+function EsoRndTbl(a, b)
+    let rep_limit = 3
+    
+    let tbl = [a, b]
+    
+    let counts = {}
+    counts[str(a)] = 1
+    counts[str(b)] = 1
 
-let second_rand = RandInt(1, 100, LCG_MULTIPLIER, LCG_INCREMENT, LCG_MODULES)
-print("Second random number (1-100): " + str(second_rand))
+    let i = 2
+    let n_i_1 = b
+    let n_i_2 = a
+    let rep = 0
+    
+    while true
+        let next_term = digit_diff(n_i_1, n_i_2)
+        
+        tbl += [next_term]
+        
+        let next_term_str = str(next_term)
 
-let third_rand = RandInt(1, 100, LCG_MULTIPLIER, LCG_INCREMENT, LCG_MODULES)
-print("Third random number (1-100): " + str(third_rand))
+        let current_count = counts[next_term_str]
+        if current_count == nil
+            counts[next_term_str] = 0
+        end
+        
+        current_count = counts[next_term_str] 
+        
+        current_count += 1
+        counts[next_term_str] = current_count
+        
+        if current_count == rep_limit
+            rep = next_term
+            break
+        end
+        
+
+        n_i_2 = n_i_1
+        n_i_1 = next_term
+        i += 1
+    end
+    
+    print("Final Sequence (tbl):")
+    print(tbl)
+    print("The repeating number (rep) that was generated for the 3rd time is:")
+    print(rep)
+end
+
+let x = input("Enter Seed X (0-99): ")
+let y = input("Enter Seed Y (0-99): ")
+
+EsoRndTbl(int(x), int(y))
